@@ -54,6 +54,9 @@ extern float *hydroRhoInv_d;   //storage for 1.0/rho
 /*---TURBULENCE*/
 #include <cuda_sgsTurbDevice_cu.h>
 
+/*---WIND TURBINE PARAMETERIZATION (NRAD)*/
+#include <cuda_nRADDevice_cu.h>
+
 /*---DIFFUSION*/
 #include <cuda_molecularDiffDevice_cu.h>
 
@@ -142,7 +145,8 @@ __global__ void cudaDevice_hydroCoreCalcFaceVelocities(float simTime, int simTim
                                                        float* sgstkeScalars_d, float* sgstke_ls_d,
                                                        float* dedxi_d, float* moistScalars_d,
                                                        float* moistTauFlds_d, float* moistScalarsFrhs_d,
-                                                       float* J31_d, float* J32_d, float* J33_d, float* D_Jac_d);
+                                                       float* J31_d, float* J32_d, float* J33_d, float* D_Jac_d,
+						       float* dist_nRAD_d, float* forces_nRAD_d, float* sphere_nRAD_d, float* xPos_d, float* yPos_d, float* zPos_d);
 __global__ void cudaDevice_hydroCoreUnitTestComplete(float simTime, int simTime_it, float dt, int timeStage, int numRKstages,
                                                      float* hydroFlds,float* hydroFldsFrhs,
                                                      float* hydroFaceVels, float* hydroBaseStateFlds, float* hydroTauFlds, 

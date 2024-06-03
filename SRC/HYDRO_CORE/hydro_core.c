@@ -69,6 +69,17 @@ float corioConstHorz;   /*Latitude dependent horizontal Coriolis term constant *
 float corioConstVert;   /*Latitude dependent Vertical Coriolis term constant */
 float corioLS_fact;     /*large-scale factor on Coriolis term*/
 
+/*----Non-rotating actuator disk model*/
+int nRADSelector;   /* nRAD selector, (0 = none, 1 = nRAD activated)*/
+float D_turb; /*Turbine rotor diameter in nRAD model*/
+float D_hub; /*Turbine hub diameter in nRAD model*/
+float z_hh; /*Turbine hub height*/
+float x_turb; /*Turbine x-location in domain*/
+float y_turb; /*Turbine y-location in domain*/
+int nForcesnRAD = 3; /*Number of components in force field from the nRAD*/
+float *forces_nRAD; /*Forces acting on the flow in nRAD model*/
+float *sphere_nRAD; /*Flag showing possible turbine location in grid (turbine yaws, so this is a maybe)*/
+
 /*----Turbulence*/ 
 int turbulenceSelector;         /*turbulence scheme selector: 0= none, 1= Lilly/Smagorinsky */
 int TKESelector;                /* Prognostic TKE selector: 0= none, 1= Prognostic */
@@ -257,6 +268,8 @@ int hydro_coreGetParams(){
    errorCode = queryIntegerParameter("coriolisSelector", &coriolisSelector, 0, 2, PARAM_MANDATORY);
    coriolisLatitude = 54.0; //Default to latitude 54.0 N 
    errorCode = queryFloatParameter("coriolisLatitude", &coriolisLatitude, -90.0, 90.0, PARAM_MANDATORY);
+   nRADSelector = 0; //Default to off
+   errorCode = queryIntegerParameter("nRADSelector", &nRADSelector, 0, 1, PARAM_MANDATORY);
    turbulenceSelector = 0; //Default to off
    errorCode = queryIntegerParameter("turbulenceSelector", &turbulenceSelector, 0, 1, PARAM_MANDATORY);
    TKESelector = 0; //Default to none
@@ -564,7 +577,11 @@ int hydro_coreInit(){
    float pi;
    int fldStride;
    float z1oz0,z1,z1ozt0;
+<<<<<<< HEAD
    int strLength;
+=======
+   float r; //radius from turbine's hub to gridpoint in nRAD
+>>>>>>> ed15f11 (Preliminary implementation of non-rotating actuator disk model with constant thrust coefficient)
 
    MPI_Barrier(MPI_COMM_WORLD); 
    printf("Entering hydro_coreInit:------\n"); 
@@ -585,6 +602,8 @@ int hydro_coreInit(){
       printComment("----------: CORIOLIS ---");
       printParameter("coriolisSelector", "Corilis force selector: 0= none, 1= horiz. terms, 2= horiz. & vert. terms");
       printParameter("coriolisLatitude", "Charactersitc latitude in degrees from equator of the LES domain");
+      printComment("----------: nRAD model ---");
+      printParameter("nRADSelector","Turn on or off non-rotating actuator disk parameterization: 0=off, 1=on");
       printComment("----------: TURBULENCE ---");
       printParameter("turbulenceSelector", "turbulence scheme selector: 0= none, 1= Lilly/Smagorinsky ");
       printParameter("TKESelector", "Prognostic TKE selector: 0= none, 1= Prognostic");
@@ -731,6 +750,7 @@ int hydro_coreInit(){
    MPI_Bcast(&buoyancySelector, 1, MPI_INT, 0, MPI_COMM_WORLD);
    MPI_Bcast(&coriolisSelector, 1, MPI_INT, 0, MPI_COMM_WORLD);
    MPI_Bcast(&coriolisLatitude, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
+   MPI_Bcast(&nRADSelector,1,MPI_INT, 0, MPI_COMM_WORLD);
    MPI_Bcast(&turbulenceSelector, 1, MPI_INT, 0, MPI_COMM_WORLD);
    MPI_Bcast(&TKESelector, 1, MPI_INT, 0, MPI_COMM_WORLD);
    MPI_Bcast(&TKEAdvSelector, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -917,6 +937,7 @@ int hydro_coreInit(){
      }
    } //end for iFld...
 
+<<<<<<< HEAD
    /* Auxiliary Scalars and associated Frhs */
    if(NhydroAuxScalars > 0){
      hydroAuxScalars = memAllocateFloat4DField(NhydroAuxScalars, Nxp, Nyp, Nzp, Nh, "hydroAuxScalars");
@@ -930,6 +951,36 @@ int hydro_coreInit(){
      } //end for iFld...
    } //end if NhydroAuxScalars
        
+=======
+   /* Non-rotating actuator disk model */
+   if(nRADSelector > 0){
+     D_turb=126.0;
+     D_hub = 3.0;
+     z_hh=90.0;
+     x_turb = 500.0;
+     y_turb = 500.0;
+     forces_nRAD = memAllocateFloat4DField(nForcesnRAD, Nxp, Nyp, Nzp, Nh, "forces_nRAD");
+     sphere_nRAD = memAllocateFloat3DField(Nxp, Nyp, Nzp, Nh, "sphere_nRAD");
+     /*Find sphere around turbine*/
+     for(i=iMin-Nh; i < iMax+Nh; i++){
+       for(j=jMin-Nh; j < jMax+Nh; j++){
+         for (k=kMin-Nh; i < kMax+Nh; k++){
+           ijk = i*(Nyp+2*Nh)*(Nzp+2*Nh)+j*(Nzp+2*Nh)+k;
+
+           r = (pow(xPos[ijk]-x_turb,2) + pow(yPos[ijk]-y_turb,2) + pow(zPos[ijk]-z_hh,2));
+	   r = pow(r,0.5);
+           if((r > 0.5*D_hub) && (r <= 0.5*D_turb)){
+             sphere_nRAD[ijk] = 1;
+           }
+           else{
+             sphere_nRAD[ijk] = 0;
+           }
+	 }
+       }
+     }
+   }
+
+>>>>>>> ed15f11 (Preliminary implementation of non-rotating actuator disk model with constant thrust coefficient)
    /* Prognostic SGSTKE equation and associated Frhs */ 
    if(TKESelector > 0){
      sgstkeScalars = memAllocateFloat4DField(TKESelector, Nxp, Nyp, Nzp, Nh, "sgstkeScalars");
@@ -2114,6 +2165,10 @@ int hydro_coreCleanup(){
        memReleaseFloat(sgstkeScalars);
        memReleaseFloat(sgstkeScalarsFrhs);
      }
+   }
+   if(nRADSelector>0){
+     memReleaseFloat(forces_nRAD);
+     memReleaseFloat(sphere_nRAD);
    } 
    if (surflayerSelector > 0) { 
      memReleaseFloat(cdFld);

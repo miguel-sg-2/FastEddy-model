@@ -41,8 +41,13 @@
 #include "cuda_surfaceLayerDevice.cu"
 #include "cuda_sgsTurbDevice.cu"
 #include "cuda_molecularDiffDevice.cu" 
+<<<<<<< HEAD
 #include "cuda_sgstkeDevice.cu"
 #include "cuda_canopyDevice.cu"
+=======
+#include "cuda_sgstkeDevice.cu" 
+#include "cuda_nRADDevice.cu"
+>>>>>>> ed15f11 (Preliminary implementation of non-rotating actuator disk model with constant thrust coefficient)
 #include "cuda_largeScaleForcingsDevice.cu" 
 #include "cuda_moistureDevice.cu" 
 #include "cuda_filtersDevice.cu" 
@@ -187,6 +192,11 @@ extern "C" int cuda_hydroCoreDeviceSetup(){
      } // end if TKESelector > 0
    }//end if turbulenceSelector > 0
 
+   /*nRAD MODEL*/
+   if(nRADSelector>0){
+     errorCode = cuda_nRADDeviceSetup();
+   } // end if nRADSelector > 0
+
    if (diffusionSelector > 0) { 
      errorCode = cuda_molecularDiffDeviceSetup();
    }
@@ -262,6 +272,9 @@ extern "C" int cuda_hydroCoreDeviceCleanup(){
      if (TKESelector > 0){
        errorCode = cuda_sgstkeDeviceCleanup();
      }
+   }
+   if(nRADSelector>0){
+     errorCode = cuda_nRADDeviceCleanup();
    }
    if (diffusionSelector > 0) { 
      errorCode = cuda_molecularDiffDeviceCleanup();
@@ -416,7 +429,8 @@ extern "C" int cuda_hydroCoreDeviceBuildFrhs(float simTime, int simTime_it, int 
                                                             invOblen_d, z0m_d, z0t_d, qFlux_d, qskin_d, sea_mask_d,
                                                             hydroRhoInv_d, hydroKappaM_d, sgstkeScalars_d, sgstke_ls_d,
                                                             dedxi_d, moistScalars_d, moistTauFlds_d, moistScalarsFrhs_d,
-                                                            J31_d, J32_d, J33_d, D_Jac_d);
+                                                            J31_d, J32_d, J33_d, D_Jac_d, 
+							    dist_nRAD_d, forces_nRAD_d, sphere_nRAD_d, xPos_d, yPos_d, zPos_d);
    gpuErrchk( cudaGetLastError() );
 #ifdef TIMERS_LEVEL2
    stopSynchReportDestroyEvent(&startE, &stopE, &elapsedTime);
@@ -896,7 +910,8 @@ __global__ void cudaDevice_hydroCoreCalcFaceVelocities(float simTime, int simTim
                                                        float* hydroRhoInv_d, float* hydroKappaM_d, float* sgstkeScalars_d, float* sgstke_ls_d,
                                                        float* dedxi_d, float* moistScalars_d, float* moistTauFlds_d,
                                                        float* moistScalarsFrhs_d,
-                                                       float* J31_d, float* J32_d, float* J33_d, float* D_Jac_d){
+                                                       float* J31_d, float* J32_d, float* J33_d, float* D_Jac_d,
+						       float* dist_nRAD_d, float* forces_nRAD_d, float* sphere_nRAD_d, float* xPos_d, float* yPos_d,float* zPos_d){
    int fldStride;
    float inv_pr; 
    int iFld; 
@@ -938,6 +953,13 @@ __global__ void cudaDevice_hydroCoreCalcFaceVelocities(float simTime, int simTim
                                             J31_d, J32_d, J33_d);
      } // end if (moistureSelector_d > 0)&&(moistureNvars_d > 0)
    } //end if pgfSelector_d > 0
+
+   //### WIND TURBINE PARAMETERIZATION ###//
+   if(nRADSelector_d > 0){
+     cudaDevice_normalDistnRAD(dist_nRAD_d, sphere_nRAD_d, xPos_d, yPos_d, zPos_d);
+     cudaDevice_activatenRAD(forces_nRAD_d, dist_nRAD_d, sphere_nRAD_d, &hydroFlds_d[fldStride*RHO_INDX], &hydroFlds_d[fldStride*U_INDX], &hydroFlds_d[fldStride*V_INDX], 
+		             &hydroFldsFrhs_d[fldStride*U_INDX], &hydroFldsFrhs_d[fldStride*V_INDX], &hydroFldsFrhs_d[fldStride*W_INDX]);
+   }
 
    //### TURBULENCE ###//
    if((turbulenceSelector_d > 0) && ((physics_oneRKonly_d==0) || (timeStage==numRKstages))){

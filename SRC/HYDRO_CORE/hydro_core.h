@@ -73,6 +73,16 @@ extern float coriolisLatitude;   /*Charactersitc latitude in degrees from equato
 extern float corioConstHorz;     /*Latitude dependent horizontal Coriolis term constant */
 extern float corioConstVert;     /*Latitude dependent Vertical Coriolis term constant */
 extern float corioLS_fact;       /*large-scale factor on Coriolis term*/
+/*----Non-rotating actuator disk model*/
+extern int nRADSelector;   /* nRAD selector, (0 = none, 1 = nRAD activated)*/
+extern float D_turb; /*Turbine rotor diameter in nRAD model*/
+extern float D_hub; /*Turbine hub diameter in nRAD model*/
+extern float z_hh; /*Turbine hub height*/
+extern float x_turb; /*Turbine x-location in domain*/
+extern float y_turb; /*Turbine y-location in domain*/
+extern int nForcesnRAD; /*Number of components in force field from the nRAD*/
+extern float *forces_nRAD; /*Forces acting on the flow in nRAD model*/
+extern float *sphere_nRAD; /*Flag showing possible turbine location in grid (turbine yaws, so this is a maybe)*/
 /*---TURBULENCE*/
 extern int turbulenceSelector;    /*turbulence scheme selector: 0= none, 1= Lilly/Smagorinsky */
 extern int TKESelector;           /* Prognostic TKE selector: 0= none, 1= Prognostic */

@@ -165,6 +165,7 @@ all: FastEddy
 	../HYDRO_CORE/CUDA/cuda_molecularDiffDevice.cu \
 	../HYDRO_CORE/CUDA/cuda_surfaceLayerDevice.cu \
 	../HYDRO_CORE/CUDA/cuda_sgsTurbDevice.cu \
+	../HYDRO_CORE/CUDA/cuda_nRADDevice.cu \
         ../HYDRO_CORE/CUDA/cuda_sgstkeDevice.cu \
 	../HYDRO_CORE/CUDA/cuda_canopyDevice.cu \
         ../HYDRO_CORE/CUDA/cuda_largeScaleForcingsDevice.cu \
