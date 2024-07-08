@@ -30,7 +30,7 @@ Input parameters
     \end{cases} 
 
 * Surface heat flux:  :math:`0.0` Km/s
-* Surface roughness length: :math:`z_0=1.0 \times 10^{-12}` m
+* Surface roughness length: :math:`z_0=1e-12` m
 * Rayleigh damping layer: uppermost :math:`600` m of the domain
 * Initial perturbations: :math:`\pm 0.25` K 
 * Depth of perturbations: :math:`375` m
@@ -41,7 +41,7 @@ Input parameters
 Execute FastEddy
 ----------------
 
-Note that this example requires specification of a leaf area density (LAD) profile. A Jupyer notebook is provided in /tutorial/notebooks/Canopy_Prep.ipynb that reads in an LAD profile in .csv format (tape archive file at `Zenodo record`_) and uses a FastEddy initial condition file to create a new initial condition file that includes de LAD information (CanopyLAD array). The notebook expects a canopy height value to be specified (:math:`h_c`), and that is currently set to 30.0 m. Run FastEddy using the input parameters file /tutorials/examples/Example05_CANOPY.in first for 1 timestep to create the FE_CANOPY.0 file, and then run the Jupyter notebook to modify the CanopyLAD array to include the LAD profile instead of the initialized all zeros. Then, run FastEddy for the :math:`4` h of the simulation. To execute FastEddy, follow the instructions `here`_.
+Note that this example requires specification of a leaf area density (LAD) profile. A Jupyer notebook is provided in /tutorial/notebooks/Canopy_preparation.ipynb that reads in an LAD profile in .csv format (tape archive file at `Zenodo record`_) and uses a FastEddy initial condition file to create a new initial condition file that includes de LAD information (CanopyLAD array). The notebook expects a canopy height value to be specified (:math:`h_c`), and that is currently set to 30.0 m. Run FastEddy using the input parameters file /tutorials/examples/Example05_CANOPY.in first for 1 timestep to create the FE_CANOPY.0 file, and then run the Jupyter notebook to modify the CanopyLAD array to include the LAD profile instead of the initialized all zeros. Then, run FastEddy for the :math:`4` h of the simulation. To execute FastEddy, follow the instructions `here`_.
 
 .. _here: https://github.com/NCAR/FastEddy-model/blob/main_v2.0/README.md
 .. _Zenodo record: https://zenodo.org/records/12610511
