@@ -1,6 +1,6 @@
-====================================
-FastEddy\ :sup:`®` version |version|
-====================================
+==================
+FastEddy\ :sup:`®`
+==================
 
 .. image:: _static/CoastalCase_u_y-32km_0440.png
 
@@ -15,9 +15,21 @@ and multiscale, turbulence-resolving, atmospheric boundary layer
 modeling into local scale weather prediction or actionable science and
 engineering applications.
 
+The FastEddy code is located in an open, public
+`GitHub FastEddy-model repository <https://github.com/NCAR/FastEddy-model>`_.
+FastEddy should be cited as shown here:
+
+  | Sauer, J., and D. Muñoz-Esparza. "The FastEddy resident-GPU accelerated large-eddy
+  |   simulation framework: model formulation, dynamical-core validation and performance
+  |   benchmarks". *Journal of Advances in Modeling Earth Systems*, vol. 12 (2020)
+  |   https://doi.org/10.1029/2020MS002100
+
+
 .. toctree::
    :hidden:
 
    release_notes.rst
+   run_ncar_hpcs.rst
    downloads.rst
-   Tutorial/index
+   Tutorials/index
+   publications.rst
