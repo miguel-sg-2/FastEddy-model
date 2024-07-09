@@ -43,8 +43,8 @@ TEST_CU_CFLAGS = ${ARCH_CU_FLAGS} -m64 -std=c++11 ${DEFINES} ${INCLUDES} ${OTHER
 L_CPPFLAGS =
 
 #OTHER_INCLUDES =
-# For compilation on NCAR's Derecho supercomputing using Cray compiler use the OTHER_INCLUDES below
-OTHER_INCLUDES = -I/opt/cray/pe/mpich/8.1.25/ucx/cray/10.0/include/
+# For compilation on NCAR's Casper or Derecho supercomputers use the OTHER_INCLUDES below
+OTHER_INCLUDES = -I${NCAR_ROOT_MPI}/include
 
 TEST_LDFLAGS = -L.
 TEST_CU_LDFLAGS = -L.

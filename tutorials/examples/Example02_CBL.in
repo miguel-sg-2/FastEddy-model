@@ -14,8 +14,8 @@ outFileBase = FE_CBL # Base name of the output file series as in (outFileBase).e
 frqOutput = 6000 # frequency (in timesteps) at which to produce output
 ioOutputMode = 0 # 0: N-to-1 gather and write to a netcdf file, 1:N-to-N writes of FastEddy binary files
 #--GRID
-Nx = 600 # 520 # 504 # Number of discretised domain elements in the x (zonal) direction
-Ny = 594 # 514 # 498 # Number of discretised domain elements in the y (meridional) direction
+Nx = 600 # Number of discretised domain elements in the x (zonal) direction
+Ny = 594 # Number of discretised domain elements in the y (meridional) direction
 Nz = 122 # 58 # Number of discretised domain elements in the z (vertical) direction
 Nh = 3 # Number of halo cells to be used (dependent on largest stencil extent)
 d_xi = 20.0 # Computational domain fixed resolution in the 'i' direction
