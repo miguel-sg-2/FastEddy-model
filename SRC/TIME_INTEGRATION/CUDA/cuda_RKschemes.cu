@@ -105,7 +105,7 @@ __global__ void cudaDevice_timeIntegrationCommenceRK3_WS2002(int Nphi, float* ph
       for(iFld=0; iFld < NauxSc; iFld++){
          currFld = &AuxSc_Flds[iFld*fldStride];
          currFrhs = &AuxSc_Frhs[iFld*fldStride];
-         currFld0 = &timeFlds0[(Nphi+iFld)*fldStride];
+         currFld0 = &timeFlds0[(Nphi+Nsgstke+Nmoist+iFld)*fldStride];
          ijk =     i  *iStride +   j  *jStride +   k  *kStride;
          switch(RKstage){    
           case 0:
