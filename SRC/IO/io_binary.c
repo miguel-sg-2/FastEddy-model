@@ -50,6 +50,7 @@ int ioPutBinaryoutFileVars(FILE *outptr, int Nx, int Ny, int Nz, int Nh){
    int rhoDivideSwitch = 0;
    int verbose_log = 0;
    float * rhofield;
+   int typeLen;
 
    /* For each entry in the ioVarsList, "put" the var */
    ptr = getFirstVarFromList();
@@ -78,12 +79,17 @@ int ioPutBinaryoutFileVars(FILE *outptr, int Nx, int Ny, int Nz, int Nh){
       }else{ // do not divide by rho
         rhoDivideSwitch=0;
       } //end if name is u,v,w, or theta
+      /*Write the output variable name*/ 
+      nameLen=strlen(ptr->name);
+      fwrite(&nameLen,sizeof(int),1,outptr); 
+      fwrite(ptr->name,nameLen*sizeof(char),1,outptr);
+      /*Write the output variable type*/
+      typeLen=strlen(ptr->type);
+      fwrite(&typeLen,sizeof(int),1,outptr);
+      fwrite(ptr->type,typeLen*sizeof(char),1,outptr); 
       //If this registered field is of type float
       if (!strcmp(ptr->type,"float")){
          field = (float *) ptr->varMemAddress;
-         nameLen=strlen(ptr->name);
-         fwrite(&nameLen,sizeof(int),1,outptr); 
-         fwrite(ptr->name,nameLen*sizeof(char),1,outptr); 
          if((ptr->nDims > 2)&&(ptr->dimids[1] == 1)){  //Should be a 4D with time,z,y,x...
            if(rhoDivideSwitch==1){
              for(i=0; i < Nx+2*Nh; i++){
