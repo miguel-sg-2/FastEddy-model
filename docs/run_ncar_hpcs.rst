@@ -38,8 +38,8 @@ subdirectory of the `GitHub FastEddy-model repository <https://github.com/NCAR/F
 The FastEddy code will write its output to an **output** directory. Please create an output
 directory, if one does not already exist, in the same location as this script.
 
-Sample Script
--------------
+Casper Sample Script
+--------------------
 
 .. note::
 
@@ -64,8 +64,8 @@ subdirectory of the `GitHub FastEddy-model repository <https://github.com/NCAR/F
 The FastEddy code will write its output to an `output` directory. Please create an output
 directory, if one does not already exist, in the same location as this script.
 
-Sample Script
--------------
+Derecho Sample Script
+---------------------
 
 .. note::
 

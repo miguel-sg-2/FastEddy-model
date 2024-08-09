@@ -1,5 +1,5 @@
 =================================================
-Boundary layer in the presence of resolved canopy
+Canopy inclusive boundary layer
 =================================================
 
 Background
@@ -41,22 +41,33 @@ Input parameters
 Execute FastEddy
 ----------------
 
-Note that this example requires specification of a leaf area density (LAD) profile. A Jupyer notebook is provided in **/tutorial/notebooks/Canopy_Prep.ipynb** that reads in an LAD profile in .csv format (*LAD_profile.csv* at `Zenodo record <https://zenodo.org/records/12610511>`_) and uses a FastEddy initial condition file to create a new initial condition file that includes de LAD information (CanopyLAD array). The notebook expects a canopy height value to be specified (:math:`h_c`), and that is currently set to 30.0 m.
+Note that this example requires specification of a leaf area density (LAD) profile. A Jupyter notebook is provided in **tutorial/notebooks/Canopy_Prep.ipynb** that reads in an LAD profile in .csv format. The *LAD_profile.csv* file can be obtained at this `Zenodo record <https://zenodo.org/records/12610511>`_. The notebook also uses a FastEddy initial condition file to create a new initial condition file, *FE_CANOPY.0*, that includes de LAD information (CanopyLAD array). The notebook expects a canopy height value to be specified (:math:`h_c`), and that is currently set to 30.0 m. 
 
-Run FastEddy using the input parameters file **/tutorials/examples/Example05_CANOPY.in** first for 1 timestep to create the *FE_CANOPY.0* file.  To run for 1 timestep, the following values need to be changed in the **/tutorials/examples/Example05_CANOPY.in** file:
+1. Create a working directory to run the FastEddy tutorials and change to that directory.
+2. Create a **Example05_CANOPY** subdirectory and change to that directory.
+3. The FastEddy code will write its output to an **output** subdirectory. Create an **output** directory, if one does not already exist.   
+4. Download the *LAD_profile.csv* and place it in an *initial* subdirectory at the same level as the **output** subdirectory.
+5. First, run FastEddy using the input parameters file **tutorials/examples/Example05_CANOPY.in** for 1 timestep to create the *FE_CANOPY.0* file.  To run for 1 timestep, the following values need to be changed in the **tutorials/examples/Example05_CANOPY.in** file:
 
-  * Change :code:`frqOutput` from 30000 to 1
-  * Change :code:`Nt` from 1440000 to 1
-  * Change :code:`NtBatch` from 30000 to 1
+   * Change :code:`frqOutput` from 30000 to 1
+   * Change :code:`Nt` from 1440000 to 1
+   * Change :code:`NtBatch` from 30000 to 1
 
-After running for 1 timestep, then run the Jupyter notebook to modify the CanopyLAD array to include the LAD profile instead of the initialized all zeros. Do this by modifying :code:`inPath` and :code:`inFile` to point to the initial condition *FE_CANOPY.0* file. Then, run FastEddy for the :math:`4` h of the simulation by changing :code:`frqOutput`, :code:`Nt`, and :code:`NtBatch` back to their original values.
+6. After running for 1 timestep, run the Jupyter notebook *Canopy_Prep.ipynb* file modifying the CanopyLAD array to include the LAD profile instead of the initialized all zeros. Modify `path_base` in this notebook file, specifying the path to the **initial/** directory that contains the *LAD_profile.csv* file. Be sure to including the trailing slash :code:`/` in :code:`path_base`. Note that this run of the Jupyter notebook will write a *FE_CANOPY.0* in the **initial** subdirectory.
+7. Then, run FastEddy for the :math:`4` h of the simulation by changing :code:`frqOutput`, :code:`Nt`, and :code:`NtBatch` back to their original values in **tutorials/examples/Example05_CANOPY.in**, and modify :code:`inPath` and :code:`inFile` in **tutorials/examples/Example05_CANOPY.in**, specifying the path and the filename, respectively, for the newly written initial condition *FE_CANOPY.0* file in the **initial** directory. Be sure to including the	trailing slash :code:`/` in the :code:`inPath`.
 
 See :ref:`run_fasteddy` for instructions on how to build and run FastEddy on NSF NCAR's High Performance Computing machines.
 
 Visualize the output
 --------------------
 
-Open the Jupyter notebook entitled *MAKE_FE_TUTORIAL_PLOTS.ipynb* and execute it using setting: :code:`case = 'canopy'`.
+1. Open the Jupyter notebook entitled *MAKE_FE_TUTORIAL_PLOTS.ipynb*.
+2. Under the "Define parameters" section, modify :code:`path_base`, specifying the full path to the **Example05_CANOPY** subdirectory, but don't include **Example05_CANOPY** subdirectory. Be sure to include a trailing slash :code:`/`).
+3. Under the "Define parameters" section, modify :code:`case` to set its value to :code:`canopy`.
+4. Run the Jupyter notebook.
+5. The resulting XY cross section png plots will be placed in a **FIGS** subdirectory of the **Example05_CANOPY** directory.
+
+
 
 XY-plane views of instantaneous velocity components at :math:`t=4` h (FE_CANOPY.1440000):
 
